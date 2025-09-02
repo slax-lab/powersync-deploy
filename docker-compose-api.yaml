@@ -4,8 +4,6 @@ services:
   powersync-api:
     image: journeyapps/powersync-service:latest
     command: ["start", "-r", "api"]
-    ports:
-      - "${PS_PORT}:${PS_PORT}"
     env_file:
       - .env
     environment:
