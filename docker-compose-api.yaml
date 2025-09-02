@@ -5,26 +5,37 @@ services:
     image: journeyapps/powersync-service:latest
     command: ["start", "-r", "api"]
     ports:
-      - "8080-8099:80"
+      - "${PS_PORT}:${PS_PORT}"
+    env_file:
+      - .env
     environment:
       - NODE_OPTIONS=--max-old-space-size=800
-      - PS_MONGO_URI=${PS_MONGO_URI}
-      - PS_DATA_SOURCE_URI=${PS_DATA_SOURCE_URI}
-      - PS_PORT=${PS_PORT}
-      - PS_JWKS_URL=${PS_JWKS_URL}
+      - POWERSYNC_CONFIG_PATH=/config/powersync.yaml
     volumes:
-      - ./config/powersync.yaml:/config/powersync.yaml:ro
-      - ./config/sync_rules.yaml:/config/sync_rules.yaml:ro
+      - ./config:/config
     networks:
       - powersync-net
     restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:${PS_PORT}/probes/liveness').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"
+        ]
+      interval: 5s
+      timeout: 1s
+      retries: 15
 
   nginx:
     image: nginx:alpine
     ports:
-      - "80:80"
+      - "8081:80"
+      - "8443:443"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs:ro
     depends_on:
       - powersync-api
     networks:
