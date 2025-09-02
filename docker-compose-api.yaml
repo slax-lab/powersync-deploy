@@ -16,6 +16,13 @@ services:
     networks:
       - powersync-net
     restart: unless-stopped
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 1024M
     healthcheck:
       test:
         [
