@@ -1,18 +1,18 @@
 version: '3.8'
 
 services:
-  powersync-api:
+  powersync-replica-api:
     image: journeyapps/powersync-service:latest
     command: ["start", "-r", "api"]
     env_file:
       - .env
     environment:
       - NODE_OPTIONS=--max-old-space-size=800
-      - POWERSYNC_CONFIG_PATH=/config/powersync.yaml
+      - POWERSYNC_CONFIG_PATH=/config/powersync_api.yaml
     volumes:
       - ./config:/config
     networks:
-      - powersync-net
+      - powersync-net-api
     restart: unless-stopped
     deploy:
       replicas: 2
@@ -33,20 +33,19 @@ services:
       timeout: 1s
       retries: 15
 
-  nginx:
+  nginx-replica-api:
     image: nginx:alpine
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/nginx_api.conf:/etc/nginx/nginx.conf:ro
       - ./config/certs:/etc/nginx/certs:ro
     depends_on:
-      - powersync-api
+      - powersync-replica-api
     networks:
-      - powersync-net
+      - powersync-net-api
     restart: unless-stopped
 
 networks:
-  powersync-net:
-    driver: bridge
+  powersync-net-api:

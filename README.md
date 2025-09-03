@@ -37,3 +37,8 @@ docker compose -f ./docker-compose-api.yaml up -d --scale powersync-api=5
 ```bash
 docker-compose -f ./docker-compose-api.yaml up -d --scale powersync-api=2
 ```
+
+### Run Compact
+```
+docker compose -f docker-compose-full.yaml run --rm powersync-sync compact
+```
