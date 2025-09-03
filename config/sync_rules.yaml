@@ -1,6 +1,25 @@
 bucket_definitions:
   user_data:
     parameters:
-      - SELECT request.user_id() AS user_id
+      - SELECT (request.jwt() ->> 'user_id')::INTEGER AS user_id
     data:
-      - SELECT * FROM orders WHERE user_id = bucket.user_id
+      - SELECT 
+          uuid AS id,
+          order_id,
+          user_id,
+          order_number,
+          product_name,
+          quantity,
+          unit_price,
+          total_amount,
+          discount_amount,
+          final_amount,
+          order_status,
+          payment_method,
+          shipping_address,
+          order_date,
+          shipped_date,
+          delivered_date,
+          uuid 
+        FROM orders 
+        WHERE user_id = bucket.user_id
