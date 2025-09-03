@@ -19,9 +19,11 @@ sync_rules:
 client_auth:
   jwks:
     keys:
-      - kty: 'oct'
-        k: !env PS_JWKS_KEY
-        alg: !env PS_JWKS_ALG
+      - kty: 'RSA'
+        n: !env PS_JWK_N
+        e: !env PS_JWK_E
+        alg: 'RS256'
+        kid: !env PS_JWK_KID
   audience: [!env PS_JWKS_AUDIENCE]
 
 api:
