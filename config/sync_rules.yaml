@@ -1,4 +1,7 @@
 bucket_definitions:
+  global:
+    data:
+      - SELECT * FROM orders
   user_data:
     parameters:
       - SELECT request.user_id() AS user_id

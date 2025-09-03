@@ -29,8 +29,8 @@ services:
           "-e",
           "fetch('http://localhost:${PS_PORT}/probes/liveness').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"
         ]
-      interval: 20s
-      timeout: 20s
+      interval: 5s
+      timeout: 1s
       retries: 15
 
   nginx:
