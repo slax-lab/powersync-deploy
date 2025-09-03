@@ -4,6 +4,6 @@ bucket_definitions:
       - SELECT * FROM orders
   user_data:
     parameters:
-      - SELECT request.user_id() AS user_id
+      - SELECT (request.jwt() ->> 'user_id')::INTEGER AS user_id
     data:
       - SELECT * FROM orders WHERE user_id = bucket.user_id
