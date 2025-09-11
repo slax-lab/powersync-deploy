@@ -1,25 +1,39 @@
 bucket_definitions:
   user_data:
     parameters:
-      - SELECT (request.jwt() ->> 'user_id')::INTEGER AS user_id
+        - SELECT id as uid FROM sr_user WHERE uuid = request.user_id()
     data:
-      - SELECT 
-          uuid AS id,
-          order_id,
-          user_id,
-          order_number,
-          product_name,
-          quantity,
-          unit_price,
-          total_amount,
-          discount_amount,
-          final_amount,
-          order_status,
-          payment_method,
-          shipping_address,
-          order_date,
-          shipped_date,
-          delivered_date,
-          uuid 
-        FROM orders 
-        WHERE user_id = bucket.user_id
+        - SELECT 
+            uuid as id,
+            email, name, picture, given_name, family_name,
+            lang, ai_lang, timezone, account,
+            last_read_at, invite_code
+          FROM sr_user 
+          WHERE id = bucket.uid
+
+        - SELECT
+            tag_name, display, created_at, uuid as id
+          FROM sr_user_tag 
+          WHERE user_id = bucket.uid
+
+        - SELECT 
+            platform, platform_id, user_name, created_at, uuid as id
+          FROM sr_platform_bind 
+          WHERE user_id = bucket.uid
+
+        - SELECT 
+            type, source, title, body, details,
+            is_read, created_at, uuid as id
+          FROM sr_user_notification 
+          WHERE user_id = bucket.uid
+
+        - SELECT 
+            uuid as id, overview, content
+          FROM sr_user_bookmark_overview WHERE user_id = bucket.uid
+
+        - SELECT
+            is_read, archive_status, is_starred,
+            created_at, updated_at, alias_title, type,
+            deleted_at, metadata, uuid as id
+          FROM sr_user_bookmark
+          WHERE user_id = bucket.uid

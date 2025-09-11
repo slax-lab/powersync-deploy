@@ -42,3 +42,21 @@ docker-compose -f ./docker-compose-api.yaml up -d --scale powersync-api=2
 ```
 docker compose -f docker-compose-full.yaml run --rm powersync-sync compact
 ```
+
+### VPS Config
+```bash
+cat >> /etc/sysctl.conf <<EOF
+fs.file-max = 200000
+net.core.somaxconn = 32768
+net.ipv4.ip_local_port_range = 1024 65535
+EOF
+
+sudo sysctl -p
+
+cat >> /etc/security/limits.conf <<EOF
+* soft nofile 65535
+* hard nofile 65535
+root soft nofile 65535
+root hard nofile 65535
+EOF
+```
