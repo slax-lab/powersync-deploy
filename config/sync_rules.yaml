@@ -36,4 +36,4 @@ bucket_definitions:
             created_at, updated_at, alias_title, type,
             deleted_at, metadata, uuid as id
           FROM sr_user_bookmark
-          WHERE user_id = bucket.uid
+          WHERE user_id = bucket.uid AND deleted_at IS NULL
