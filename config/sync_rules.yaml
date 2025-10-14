@@ -1,7 +1,9 @@
 bucket_definitions:
-  user_data:
+  user_data_v1:
     parameters:
-        - SELECT id as uid FROM sr_user WHERE uuid = request.user_id()
+        - SELECT id as uid FROM sr_user 
+          WHERE uuid = request.user_id()
+          AND request.parameters() ->> 'schema_version' = '1'
     data:
         - SELECT 
             uuid as id,
@@ -29,7 +31,8 @@ bucket_definitions:
 
         - SELECT 
             uuid as id, overview, content
-          FROM sr_user_bookmark_overview WHERE user_id = bucket.uid
+          FROM sr_user_bookmark_overview 
+          WHERE user_id = bucket.uid
 
         - SELECT
             is_read, archive_status, is_starred,
