@@ -3,7 +3,7 @@ config:
 
 streams:
   bookmark_comment:
-    query: select uuid as id, type, source, comment, approx_source, content, is_deleted, created_at, metadata from sr_bookmark_comment where bookmark_id = (SELECT id FROM sr_user_bookmark WHERE uuid = subscription.parameters() ->> 'bookmark_uuid' AND user_id = auth.user_id())
+    query: select uuid as id, type, source, comment, approx_source, content, is_deleted, created_at, metadata from sr_bookmark_comment where bookmark_id = (SELECT id FROM sr_user_bookmark WHERE uuid = subscription.parameters() ->> 'bookmark_uuid')
     accept_potentially_dangerous_queries: false
     auto_subscribe: false
 
