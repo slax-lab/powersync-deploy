@@ -1,3 +1,12 @@
+config:
+  edition: 2
+
+streams:
+  bookmark_comment:
+    query: select uuid as id, type, source, comment, approx_source, content, is_deleted, created_at, metadata from sr_bookmark_comment where bookmark_id = (SELECT id FROM sr_user_bookmark WHERE uuid = subscription.parameters() ->> 'bookmark_uuid' AND user_id = auth.user_id())
+    accept_potentially_dangerous_queries: false
+    auto_subscribe: false
+
 bucket_definitions:
   user_data_v1:
     parameters:
@@ -29,14 +38,16 @@ bucket_definitions:
           FROM sr_user_notification 
           WHERE user_id = bucket.uid
 
-        - SELECT 
-            uuid as id, overview, content
-          FROM sr_user_bookmark_overview 
-          WHERE user_id = bucket.uid
-
         - SELECT
             is_read, archive_status, is_starred,
             created_at, updated_at, alias_title, type,
             deleted_at, metadata, uuid as id
           FROM sr_user_bookmark
           WHERE user_id = bucket.uid AND deleted_at IS NULL
+
+        - SELECT
+            uuid as id, stripe_subscription_id, stripe_customer_id, stripe_stripe_currency,
+            first_subscription_time, subscription_end_time, next_invoice_time,
+            auto_renew, stripe_credit, subscribed, apple_original_transaction_id, source_type
+          FROM sr_user_subscription
+          WHERE user_id = bucket.uid
